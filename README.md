@@ -1,1 +1,1 @@
-Digital VLSI SoC 
+Digital VLSI SoC Design and Planning
