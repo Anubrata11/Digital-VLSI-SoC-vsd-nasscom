@@ -48,8 +48,10 @@ Tasks:-
 1. Run the 'picorv32a' design floorplan using OpenLANE Flow
 2. Calculate the die area in microns from the floorplan def
 3. Load the generated floorplan in magic tool
+4. Run the 'picorv32a' design congestion aware placement in the OpenLANE flow
+5. Load the generated placement in the magic tool
 
-Command for generating floorplan:
+#### Command for generating floorplan:
 ```
 run_floorplan
 ```
@@ -82,7 +84,7 @@ $$
 Area\ of\ die\ in\ microns\ = 660.685 \times 671.405 = 443587.212425\ square\ microns
 $$
 
-Command to load floorplan def in magic tool:-  
+#### Command to load floorplan def in magic tool:-  
 ```
 # Command for opening the floorplan directory 
 cd Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/17-03_12-06/results/floorplan/
@@ -101,6 +103,19 @@ Diagonally equidistant tap cells
 ![screenshot 10](https://github.com/user-attachments/assets/00586a6a-1a47-4b28-8aee-09d9bbcce722)
 ![screenshot 11](https://github.com/user-attachments/assets/44b484c4-4864-445d-9439-d72aede37d40)
 
+#### Command to run design congestion aware placement:- 
+```
+run_placement
+```
+Screenshot of running placement:
+![screenshot 13](https://github.com/user-attachments/assets/77b240e5-b43d-4e4c-a841-ae07ce312311)
 
+#### Command to load placement def in magic tool:-
+```
+magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.placement.def &
+```
 
+Screenshot of loading placement in magic tool
+![screenshot 14](https://github.com/user-attachments/assets/2d60d025-dacb-471e-bec7-80f4afd24d6d)
+![screenshot 15](https://github.com/user-attachments/assets/58c91c72-318e-486b-82e3-d8b2477b500a)
 
