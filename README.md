@@ -119,3 +119,58 @@ Screenshot of loading placement in magic tool
 ![screenshot 14](https://github.com/user-attachments/assets/2d60d025-dacb-471e-bec7-80f4afd24d6d)
 ![screenshot 15](https://github.com/user-attachments/assets/58c91c72-318e-486b-82e3-d8b2477b500a)
 
+## Day 3 - Design library cell using Magic Layout and ngspice characterization
+Tasks:- 
+1. Using the IO placer to change the distance between tap cells
+2. Clone the standard cell design for an inverter from a github repository
+3. Load the invertor layout in magic tool
+4. Performing spice extraction of invertor in magic tool
+   
+#### Command for changing the distance between cells
+```
+set env(FP_IO_MODE) 2
+```
+Screenshot of command and new spacing between cells
+![screenshot 12](https://github.com/user-attachments/assets/bbaa252d-e752-4acb-aadc-3133ba92952f)
+![screenshot 1](https://github.com/user-attachments/assets/42fa8612-840c-4527-af17-6c3006f7f9bc)
+
+#### Commands for creating clone of github repository and opening layout in magic tool
+```
+# Clone the repository with custom inverter design
+git clone https://github.com/nickson-jose/vsdstdcelldesign.git
+
+# Copy the magic tech file to the directory where repository is present
+cp sky130A.tech /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign
+
+# Open the invertor design in magic tool
+magic -T sky130A.tech sky130_inv.mag &
+```
+Screenshots of command run
+![screenshot 13](https://github.com/user-attachments/assets/d941bba1-3c58-4053-830d-49398592a2de)
+Invertor layout in magic tool
+![screenshot 3](https://github.com/user-attachments/assets/ef5b366d-b77f-4ef9-8b70-56f3b3e77112)
+PMOS and NMOS identification
+![screenshot 4](https://github.com/user-attachments/assets/bee33676-53ed-4d8f-9e7a-b11646772868)
+![screenshot 5](https://github.com/user-attachments/assets/7aa428f1-ff81-427b-810c-5ca94c108c45)
+Connectivity of Y to drain of PMOS and NMOS
+![screenshot 6](https://github.com/user-attachments/assets/25e5a1fa-d76f-4cb4-a074-5b82e2958c1f)
+Connection of source of PMOS to Vdd
+![screenshot 7](https://github.com/user-attachments/assets/c940d862-789f-444e-9a18-29ae98d3c70e)
+Connection of source of NMOS to Ground
+![screenshot 8](https://github.com/user-attachments/assets/6aa074b0-790c-4715-bd87-e84c2bcf4d77)
+DRC error upon deletion of part
+![screenshot 9](https://github.com/user-attachments/assets/113b01f9-0d46-4bc7-a960-3d847a4fe3f5)
+
+#### Commands for SPICE extraction of invertor design in tkcon window 
+```
+extract all
+# This command enables parasitic extraction
+ext2spice cthresh 0 rthresh 0
+ext2spice
+```
+
+Screenshot of running command
+![screenshot 10](https://github.com/user-attachments/assets/74467a86-f7ef-4e16-baf9-3791bb70ae64)
+Screenshot of SPICE file 
+![screenshot 11](https://github.com/user-attachments/assets/eb65e7d2-299a-41c7-bac0-cc0e2488ff70)
+
