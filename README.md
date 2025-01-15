@@ -125,6 +125,7 @@ Tasks:-
 2. Clone the standard cell design for an inverter from a github repository
 3. Load the invertor layout in magic tool
 4. Performing spice extraction of invertor in magic tool
+5. Editing the SPICE model file and graphical simulation
    
 #### Command for changing the distance between cells
 ```
@@ -174,3 +175,92 @@ Screenshot of running command
 Screenshot of SPICE file 
 ![screenshot 11](https://github.com/user-attachments/assets/eb65e7d2-299a-41c7-bac0-cc0e2488ff70)
 
+Dimensions of a unit box in the layout grid
+![screenshot 14](https://github.com/user-attachments/assets/cdaf5083-c963-4d28-ad8a-7ee97f150524)
+Final edited SPICE file for analysis
+![screenshot 15](https://github.com/user-attachments/assets/1f42ef06-6a40-4f71-ae7b-c9d2bfd50494)
+
+#### Commands for ngspice simulation of the SPICE file
+```
+# To load the SPICE file in the ngspice simulator
+ngspice sky130_inv.spice
+# To load the plot of the output vs time
+plot y vs time a
+```
+
+Screenshot of running commands
+![screenshot 16](https://github.com/user-attachments/assets/11260a45-2d24-479a-a95c-dfbe34915bac)
+Screenshot of generated plot
+![screenshot 17](https://github.com/user-attachments/assets/7c4c8de2-3f80-4c06-8e30-469b62bebcda)
+
+Rise transition time calculation:
+
+$$
+Rise\ transition\ time\ = Time\ taken\ for\ output\ to\ rise\ to\ 80 \\% - time\ taken\ for\ output\ to\ rise\ to\ 20 \\%
+$$
+
+$$ 
+80 \\%\ of\ output\ = 2.664\ V
+$$
+
+$$
+20 \\%\ of\ output\ = 0.666\ V
+$$
+
+$$
+Therefore,\ rise\ transition\ time\ = 2.2413\ - 2.1802\ = 0.061\ ns\ = 61.1\ ps
+$$
+
+Screenshot of rise to 80%
+![80 % rise](https://github.com/user-attachments/assets/9c7403e5-ddb4-444c-9276-ce5b031b2ff0)
+Screenshot of rise to 20%
+![20 % rise](https://github.com/user-attachments/assets/625c487e-6a4b-4fe0-aecb-108eae746b01)
+Screenshot of time values
+![screenshot 18](https://github.com/user-attachments/assets/b18f3660-ea0f-4bf8-a4f1-a5bf52c8ce58)
+
+Fall transition time calculation:
+
+$$
+Fall\ transition\ time\ calculation\ = Time\ taken\ for\ output\ to\ fall\ to\ 20 \\% - Time\ taken\ for\ output\ to\ fall\ to\ 80 \\%
+$$
+
+$$
+4.09331\ - 4.05024\ = 0.04307\ ns\ = 43.07\ ps
+$$
+
+Screenshot of fall to 20%
+![20 % fall](https://github.com/user-attachments/assets/72e679c4-4ecb-4301-99ad-f4926c771cb8)
+Screenshot of fall to 80%
+![80 % fall](https://github.com/user-attachments/assets/4ec664e7-567a-43d1-872a-e4e14165e57c)
+Screenshot of time values
+![screenshot 19](https://github.com/user-attachments/assets/8ba575ae-5be3-41ba-9c5c-d96b74ed0fdc)
+
+Cell rise delay calculation:
+
+$$
+Cell\ rise\ delay\ = Time\ taken\ for\ output\ to\ rise\ to\ 50 \\% - Time\ taken\ for\ input\ to\ fall\ to\ 50 \\%
+$$
+
+$$
+2.20763\ - 2.14948\ = 0.05815\ ns = 58.15\ ps
+$$
+
+Screenshot of rise and fall to 50%
+![50 % for rise delay](https://github.com/user-attachments/assets/14349e30-4d29-4f5b-a4c7-ce96f3a1eff2)
+Screenshot of time values
+![screenshot 20](https://github.com/user-attachments/assets/a3c14720-1633-41d4-bcc8-91fe9b7b3fc9)
+
+Cell fall delay calculation:
+
+$$
+Cell\ fall\ delay\ = Time\ taken\ for\ output\ to\ fall\ to\ 50 \\% - Time\ taken\ for\ input\ to\ rise\ to\ 50 \\%
+$$
+
+$$
+4.07567\ - 4.04997\ = 0.0257\ ns = 25.7\ ps
+$$
+
+Screenshot of rise and fall to 50%
+![50 % for fall delay](https://github.com/user-attachments/assets/f261192a-4f0d-418b-bc60-3c8f801cd5fa)
+Screenshot for time values
+![screenshot 21](https://github.com/user-attachments/assets/bed08bed-37ba-4958-a873-6fcbca91da7a)
