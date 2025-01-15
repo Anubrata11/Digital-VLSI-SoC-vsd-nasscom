@@ -126,6 +126,7 @@ Tasks:-
 3. Load the invertor layout in magic tool
 4. Performing spice extraction of invertor in magic tool
 5. Editing the SPICE model file and graphical simulation
+6. Find the error in the magic tech file and fix them
    
 #### Command for changing the distance between cells
 ```
@@ -245,7 +246,7 @@ $$
 2.20763\ - 2.14948\ = 0.05815\ ns = 58.15\ ps
 $$
 
-Screenshot of rise and fall to 50%
+Screenshot of rise of output and fall of input to 50%
 ![50 % for rise delay](https://github.com/user-attachments/assets/14349e30-4d29-4f5b-a4c7-ce96f3a1eff2)
 Screenshot of time values
 ![screenshot 20](https://github.com/user-attachments/assets/a3c14720-1633-41d4-bcc8-91fe9b7b3fc9)
@@ -260,7 +261,97 @@ $$
 4.07567\ - 4.04997\ = 0.0257\ ns = 25.7\ ps
 $$
 
-Screenshot of rise and fall to 50%
+Screenshot of rise of input and fall of output to 50%
 ![50 % for fall delay](https://github.com/user-attachments/assets/f261192a-4f0d-418b-bc60-3c8f801cd5fa)
 Screenshot for time values
 ![screenshot 21](https://github.com/user-attachments/assets/bed08bed-37ba-4958-a873-6fcbca91da7a)
+
+#### Commands to download the folder having corrupted magic layouts
+```
+wget http://opencircuitdesign.com/open_pdks/archive/drc_tests.tgz
+tar xfz drc_tests.tgz
+cd drc_tests
+gvim .magicrc  # To view the .magicrc file
+
+magic -d XR &  # To open magic tool
+```
+
+Screenshots of running commands
+![screenshot 22](https://github.com/user-attachments/assets/d24d58b7-8e50-4ff6-86ec-88009719d513)
+![screenshot 23](https://github.com/user-attachments/assets/cae2d414-ffbe-42cc-9b2c-29b64b7afa26)
+Screenshot of .magicrc file
+![screenshot 24](https://github.com/user-attachments/assets/1c9a13e6-27df-498c-9954-41bc236f4357)
+
+```
+# Command for seeing the DRC errors
+drc why
+```
+
+Metal3 design rules
+![m3 rules](https://github.com/user-attachments/assets/0ce382b4-82ec-40da-9e28-d2051dbcff8f)
+Screenshot of metal3 file loaded onto magic tool
+![screenshot 25](https://github.com/user-attachments/assets/e2a38227-0069-4cd6-ac83-251927d540b8)
+Violation of design rule m3.4 (Via2 must be enclosed by Met3 by at least 0.065 µm)
+![screenshot 26](https://github.com/user-attachments/assets/47a7a287-3f3d-4ae0-8732-93c4903d3d15)
+
+Poly Rules
+![poly rules](https://github.com/user-attachments/assets/8c2a9a81-b32b-407b-b932-f3d1421ce986)
+Incorrect implementation of rule poly.9 (Poly resistor spacing < 0.48 um)
+![incorrect poly 9](https://github.com/user-attachments/assets/f0c12a24-f4cd-427c-9d0b-7420e813ad6d)
+![screenshot 27](https://github.com/user-attachments/assets/22711aa2-5211-46fb-b0b0-10b4a36a8c16)
+
+To overcome these errors, we need the following changes to the tech file
+![polynonres 1](https://github.com/user-attachments/assets/5ed13de8-cc7c-410a-a005-a1d86072c355)
+![polynonres 2](https://github.com/user-attachments/assets/2af582d4-99d5-4a97-ab11-43d76a462e6e)
+
+#### Commands to run in the tkcon terminal
+```
+tech load sky130A.tech
+drc check
+drc why
+```
+
+Screenshots 
+![screenshot 28](https://github.com/user-attachments/assets/7211cd64-cbf8-4329-ab9d-61cfab411bd4)
+![screenshot 29](https://github.com/user-attachments/assets/0df8a5cc-5665-4581-bd6b-2255b753900b)
+
+#### Exercise to describe DRC error as a geometrical construct 
+
+Screenshot of nwell rules
+![nwell rules](https://github.com/user-attachments/assets/da2476e1-59e4-4b07-8a35-a7c6c420bd3a)
+![dnwell rules](https://github.com/user-attachments/assets/baa8f580-3e98-4edf-bc26-8901577aa7fa)
+
+```
+# Commands to be written in tkcon terminal
+cif ostyle drc
+cif see dnwell_shrink
+feed clear
+cif see nwell_missing
+feed clear
+```
+
+![screenshot 30](https://github.com/user-attachments/assets/3b666b0e-d305-4de4-a4a2-17e85fe56299)
+![screenshot 31](https://github.com/user-attachments/assets/029ea8cb-939f-455d-a241-45e69d66e598)
+
+#### Exercise to find missing or incorrect rules and fixing them
+
+Modification of code inside the tech file:
+```
+cifmaxwidth nwell_untapped 0 bend_illegal \
+  "Nwell missing tap (nwell.4)"
+```
+
+Screenshots of the changes 
+![final change 1](https://github.com/user-attachments/assets/27068ead-60ff-4dc6-98f5-f41efd412630)
+![final change 2](https://github.com/user-attachments/assets/849961df-3119-4962-a3c4-b4da38f759db)
+
+Commands to be given after modification:
+```
+tech load sky130A.tech
+drc style drc(full)
+drc check
+drc why
+```
+
+Screenshot after implementation of rules
+![screenshot 32](https://github.com/user-attachments/assets/7926143c-4b82-4d6f-88bd-863fbf7680c6)
