@@ -355,3 +355,132 @@ drc why
 
 Screenshot after implementation of rules
 ![screenshot 32](https://github.com/user-attachments/assets/7926143c-4b82-4d6f-88bd-863fbf7680c6)
+
+## Day 4 - Pre layout timing analysis and importance of good clock tree
+
+#### Fixing DRC errors
+
+Screenshot of tracks.info file
+![ss 2](https://github.com/user-attachments/assets/acded65c-cbcc-4471-8e5e-f74d092d5e14)
+
+```
+#Command to rectify the errors
+grid 0.46um 0.34um 0.23um 0.17um
+```
+![ss 3](https://github.com/user-attachments/assets/eb42938f-d661-49d2-bbea-e4c4ee3e3555)
+
+Condition 1: The input and output ports of the standard cell should lie on the intersection of the vertical and horizontal tracks
+![correction 1](https://github.com/user-attachments/assets/62b29c35-2916-4a87-8778-a125c352601f)
+
+Condition 2: Width of the standard cell should be odd multiples of the horizontal track pitch
+![correction 2](https://github.com/user-attachments/assets/aca56f0f-01d5-4850-8bad-a69e2f6ff90a)
+
+Condition 3: Height of the standard cell should be even multiples of the vertical track pitch.
+![correction 3](https://github.com/user-attachments/assets/6677c2fa-df76-4955-a0dc-ff4c30eb47b7)
+
+#### Generation of lef from the layout
+![ss 5](https://github.com/user-attachments/assets/6ce92ccc-a9ea-43d6-af4a-4e7e98136503)
+![ss 6](https://github.com/user-attachments/assets/0424e3e2-c477-4776-a1b9-1ef23b3ca4d9)
+Screenshot of lef file
+![ss 7](https://github.com/user-attachments/assets/b18282da-d0bf-4b7b-a5cb-276db8a9307a)
+
+Copying lef files and other libs into 'src' directory
+![ss 8](https://github.com/user-attachments/assets/d7de7e7a-5d32-45bf-a08b-657fd8750f64)
+Edited config.tcl file
+![ss 9](https://github.com/user-attachments/assets/8580c28c-8f47-4193-ab1f-af24ebde636f)
+
+#### Commands to run OpenLANE by introducing custom inverter
+```
+cd Desktop/work/tools/openlane_working_dir/openlane
+docker
+./flow.tcl -interactive
+package require openlane 0.9
+prep -design picorv32a
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]    # Adiitional commands to include newly added lef to openlane flow
+add_lefs -src $lefs
+run_synthesis
+```
+
+![ss 10](https://github.com/user-attachments/assets/d4a1c2b2-faf6-4325-ab75-fc78770738ad)
+![ss 11](https://github.com/user-attachments/assets/0cb6b6eb-43f1-4713-b8d1-274c84511b25)
+
+#### Commands to edit the design parameters to improve timing
+```
+echo $::env(SYNTH_BUFFERING)
+echo $::env(SYNTH_SIZING)
+set ::env(SYNTH_SIZING) 1
+echo $::env(SYNTH_DRIVING_CELL)
+```
+![ss 12](https://github.com/user-attachments/assets/33c62c97-51ad-43d4-8ea4-8ee15b392808)
+![ss 13](https://github.com/user-attachments/assets/6db4ed56-b168-4a0e-8ee6-461003c7000a)
+
+Running Floorplan
+![ss 15](https://github.com/user-attachments/assets/5ae3b22c-f66f-4100-adba-9fcac006e339)
+![ss 16](https://github.com/user-attachments/assets/d3865982-4b9c-4028-8724-f0b5c0347831)
+![ss 17](https://github.com/user-attachments/assets/219db7c1-02b8-43bd-8c04-1986f7c5b1af)
+
+Running Placement
+![ss 18](https://github.com/user-attachments/assets/be9ae1e9-f7fa-48aa-a170-afce657a0a56)
+
+Screenshot of placement def in magic 
+![placement](https://github.com/user-attachments/assets/5588385d-65d2-43cc-88c4-1bf46bbcaecb)
+Screenshot of custom inverter
+![ss 22](https://github.com/user-attachments/assets/6a328b9d-0381-4b0a-8218-b7809562bb3f)
+
+#### Commands to perform timing analysis using OpenSTA tool
+```
+cd Desktop/work/tools/openlane_working_dir/openlane
+sta pre_sta.conf
+````
+
+Screenshot of my_base.sdc
+![sdc file](https://github.com/user-attachments/assets/f541a1ef-fe70-4f26-8244-a30090af0de8)
+Screenshot of pre_sta.conf
+![sta file](https://github.com/user-attachments/assets/9075cb59-f5fc-421f-8024-b67605af5243)
+
+#### Commands to generate Clock Tree Synthesis
+```
+run_cts
+```
+#### Commands to run the OpenROAD tool in OpenLANE
+```
+openroad
+write_db pico_cts.db
+read_db pico_cts.db
+read_verilog /openLANE_flow/designs/picorv32a/runs/03-07_11-25/results/synthesis/picorv32a.synthesis_cts.v
+read_liberty $::env(LIB_SYNTH_COMPLETE)
+link_design picorv32a
+read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
+set_propagated_clock (all_clocks)
+report_checks -path_delay min_max -format full_clock_expanded -digits 4
+```
+
+Slack at the end of the timing analysis
+![cts](https://github.com/user-attachments/assets/5573adcc-a892-44df-81cd-67191a5c77a3)
+
+## Day 5 - Final steps for RTL2GDS using tritonRoute and OpenSTA
+```
+# Command to create power dristibution network
+gen_pdn
+```
+
+Screenshot of running pdn
+![ss1](https://github.com/user-attachments/assets/400bdd71-6e9e-49cf-a3ea-60ef9a672526)
+
+Commands for running routing
+```
+echo $::env(CURRENT_DEF)
+echo $::env(ROUTING_STRATEGY)
+run_routing
+```
+
+Commands for performing parasitic extraction using SPEF extractor
+```
+cd Desktop/work/tools/SPEF_EXTRACTOR
+python3 main.py /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/26-03_08-45/tmp/merged.lef /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/26-03_08-45/results/routing/picorv32a.def
+```
+
+## Acknowledgements
+1. Kunal Ghosh - Co Founder at VLSI System Design
+2. Nickson P Jose
+3. Timothy Edwards 
